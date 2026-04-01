@@ -61,5 +61,13 @@ class LaravelRagServiceProvider extends ServiceProvider
         ], 'laravel-rag-migrations');
 
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                Commands\IndexCommand::class,
+                Commands\IndexRepoCommand::class,
+                Commands\SearchCommand::class,
+            ]);
+        }
     }
 }

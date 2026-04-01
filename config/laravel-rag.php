@@ -103,6 +103,7 @@ return [
         \Jekabs\LaravelRag\Extractors\FilamentResourceExtractor::class,
         \Jekabs\LaravelRag\Extractors\MiddlewareExtractor::class,
         \Jekabs\LaravelRag\Extractors\ValidationRuleExtractor::class,
+        \Jekabs\LaravelRag\Extractors\ChunkExtractor::class,
     ],
 
     /*

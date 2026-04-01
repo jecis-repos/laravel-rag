@@ -19,6 +19,11 @@ final class Indexer
     /** @var ExtractorContract[] */
     private array $extractors = [];
 
+    private string $currentFileHash = '';
+
+    /** @var array{scanned: int, skipped: int, indexed: int} */
+    private array $lastIndexStats = ['scanned' => 0, 'skipped' => 0, 'indexed' => 0];
+
     public function __construct(
         private readonly EmbeddingDriverContract $embeddings,
     ) {}
@@ -33,6 +38,19 @@ final class Indexer
      */
     public function indexFile(string $filePath, string $content): ExtractionResult
     {
+        $contentHash = hash('sha256', $content);
+
+        // Check if any node for this file already has this hash — skip if unchanged
+        $existing = KnowledgeNodeModel::where('source_path', $filePath)
+            ->where('content_hash', $contentHash)
+            ->exists();
+
+        if ($existing) {
+            return new ExtractionResult(); // File unchanged, skip
+        }
+
+        $this->currentFileHash = $contentHash;
+
         $result = new ExtractionResult();
 
         foreach ($this->extractors as $extractor) {
@@ -56,7 +74,10 @@ final class Indexer
      */
     public function indexDirectory(string $directory, array $extensions = ['php']): int
     {
-        $count = 0;
+        $scanned = 0;
+        $skipped = 0;
+        $indexed = 0;
+
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($directory, \FilesystemIterator::SKIP_DOTS),
         );
@@ -77,17 +98,37 @@ final class Indexer
                 continue;
             }
 
+            $scanned++;
+
             $relativePath = str_starts_with($file->getPathname(), $directory)
                 ? ltrim(substr($file->getPathname(), strlen($directory)), '/')
                 : $file->getPathname();
 
             $result = $this->indexFile($relativePath, $content);
-            if (!$result->isEmpty()) {
-                $count++;
+            if ($result->isEmpty()) {
+                $skipped++;
+            } else {
+                $indexed++;
             }
         }
 
-        return $count;
+        $this->lastIndexStats = [
+            'scanned' => $scanned,
+            'skipped' => $skipped,
+            'indexed' => $indexed,
+        ];
+
+        return $indexed;
+    }
+
+    /**
+     * Get stats from the last indexDirectory() call.
+     *
+     * @return array{scanned: int, skipped: int, indexed: int}
+     */
+    public function getLastIndexStats(): array
+    {
+        return $this->lastIndexStats;
     }
 
     /**
@@ -124,6 +165,7 @@ final class Indexer
                     'end_line' => $node->endLine,
                     'metadata' => $node->metadata,
                     'embedding' => $vectorString,
+                    'content_hash' => $this->currentFileHash,
                 ],
             );
         }
