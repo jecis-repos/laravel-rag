@@ -1,10 +1,15 @@
 # jekabs/laravel-rag
 
-Laravel RAG (Retrieval-Augmented Generation) package with AST-aware code extractors, a knowledge graph, multi-hop search, pgvector semantic search, BM25 keyword search, and Reciprocal Rank Fusion.
+[![Tests](https://github.com/jecis-repos/laravel-rag/actions/workflows/tests.yml/badge.svg)](https://github.com/jecis-repos/laravel-rag/actions)
+[![PHP 8.2+](https://img.shields.io/badge/php-8.2%2B-blue.svg)](https://www.php.net/)
+[![Laravel 10-13](https://img.shields.io/badge/laravel-10--13-red.svg)](https://laravel.com/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+Laravel RAG (Retrieval-Augmented Generation) package with **AST-aware code extractors**, a **knowledge graph**, **multi-hop search**, pgvector semantic search, BM25 keyword search, and Reciprocal Rank Fusion.
 
 ## What Makes This Different
 
-Most RAG implementations chunk files by character count and do a single vector search. This package understands **Laravel code structure**:
+Most RAG implementations chunk files by character count and do a single vector search. This package **understands Laravel code structure**:
 
 - **12 AST extractors** using `nikic/php-parser` that understand Eloquent relationships, morph maps, event/listener bindings, service container registrations, routes, migrations, Filament resources, middleware, and validation rules
 - **Knowledge graph** with typed edges (belongs_to, has_many, listens_to, binds_to, routes_to, etc.)
@@ -134,12 +139,34 @@ See `config/laravel-rag.php` for all options:
 - `search.rrf_k` — RRF constant (default: 60)
 - `search.recency_days`, `search.recency_boost` — boost recent files
 
+## How It Compares
+
+| Feature | **laravel-rag** | Other Laravel RAG packages |
+|---------|:-:|:-:|
+| AST-aware code parsing | 12 extractors | Text chunking only |
+| Knowledge graph with typed edges | Multi-hop traversal | No graph |
+| Hybrid search (semantic + keyword) | pgvector + BM25 + RRF | Single-mode search |
+| Laravel-specific understanding | Eloquent, routes, events, bindings | Generic text |
+| Incremental indexing | Content hash tracking | Full re-index |
+| BM25 with Yates correction | Built-in | Not available |
+| Recency boost | Configurable | Not available |
+| Bring-your-own embeddings | Driver contract | Hardcoded provider |
+| Zero external API lock-in | Works with any embedding source | Often tied to OpenAI |
+
+Compared packages: `omniglies/laravel-rag`, `thaolaptrinh/laravel-rag`, `akira/laravel-rag`, `mohaphez/laravel-ragkit`, `nomanur/laravel-markdown-rag`.
+
 ## Testing
 
 ```bash
 composer install
 vendor/bin/phpunit
 ```
+
+81 tests covering all 12 extractors, BM25 algorithm, chunking service, search pipeline, and end-to-end scenarios. Most tests run without a database — integration tests that require PostgreSQL + pgvector are skipped automatically when unavailable.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines. The most common contribution is adding a new AST extractor — the architecture makes this straightforward.
 
 ## License
 
