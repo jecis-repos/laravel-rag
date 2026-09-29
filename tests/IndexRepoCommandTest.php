@@ -28,7 +28,6 @@ final class IndexRepoCommandTest extends TestCase
     {
         $reflection = new ReflectionClass(IndexRepoCommand::class);
         $method = $reflection->getMethod('resolveRepoUrl');
-        $method->setAccessible(true);
 
         $command = $reflection->newInstanceWithoutConstructor();
 
@@ -43,7 +42,6 @@ final class IndexRepoCommandTest extends TestCase
     {
         $reflection = new ReflectionClass(IndexRepoCommand::class);
         $method = $reflection->getMethod('resolveRepoUrl');
-        $method->setAccessible(true);
 
         $command = $reflection->newInstanceWithoutConstructor();
 
@@ -55,7 +53,6 @@ final class IndexRepoCommandTest extends TestCase
     {
         $reflection = new ReflectionClass(IndexRepoCommand::class);
         $method = $reflection->getMethod('resolveRepoUrl');
-        $method->setAccessible(true);
 
         $command = $reflection->newInstanceWithoutConstructor();
 
@@ -67,7 +64,6 @@ final class IndexRepoCommandTest extends TestCase
     {
         $reflection = new ReflectionClass(IndexRepoCommand::class);
         $method = $reflection->getMethod('repoPrefix');
-        $method->setAccessible(true);
 
         $command = $reflection->newInstanceWithoutConstructor();
 
