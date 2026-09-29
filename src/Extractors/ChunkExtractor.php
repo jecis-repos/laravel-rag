@@ -19,7 +19,7 @@ use Jekabs\LaravelRag\Services\ChunkingService;
 final class ChunkExtractor implements ExtractorContract
 {
     /** @var list<string> Extensions that PHP AST extractors already handle */
-    private const array AST_EXTENSIONS = ['php'];
+    private const AST_EXTENSIONS = ['php'];
 
     private readonly ChunkingService $chunking;
 
