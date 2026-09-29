@@ -28,7 +28,6 @@ final class CommandTest extends TestCase
     {
         $reflection = new ReflectionClass(IndexCommand::class);
         $property = $reflection->getProperty('signature');
-        $property->setAccessible(true);
 
         // Create instance without constructor side effects
         $instance = $reflection->newInstanceWithoutConstructor();
@@ -44,7 +43,6 @@ final class CommandTest extends TestCase
     {
         $reflection = new ReflectionClass(SearchCommand::class);
         $property = $reflection->getProperty('signature');
-        $property->setAccessible(true);
 
         $instance = $reflection->newInstanceWithoutConstructor();
         $signature = $property->getValue($instance);

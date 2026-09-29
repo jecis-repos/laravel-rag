@@ -20,8 +20,11 @@ Most RAG implementations chunk files by character count and do a single vector s
 
 ## Installation
 
+Install directly from the public Git repository with Composer. Packagist registration is pending.
+
 ```bash
-composer require jekabs/laravel-rag
+composer config repositories.laravel-rag vcs https://github.com/jecis-repos/laravel-rag.git
+composer require jekabs/laravel-rag:dev-main
 ```
 
 Publish config and migrations:
